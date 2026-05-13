@@ -1,0 +1,267 @@
+<!-- src/app/admin/feature-management/feature-management.component.html -->
+<div class="main-content">
+  <header class="content-header">
+    <div class="header-titles">
+      <span class="breadcrumb-mini">System / Roadmap</span>
+      <h1>Feature Roadmap</h1>
+      <p>Manage the visual journey of your SFA features.</p>
+    </div>
+    <div class="header-actions">
+      <!-- Global Module Toggle (Segmented Button Design) -->
+      <div class="roadmap-toggle-segmented">
+        <button type="button" class="toggle-opt active-opt" [class.active]="isModuleActive"
+          (click)="toggleModule(true)">
+          <span class="dot"></span> ENABLED
+        </button>
+        <button type="button" class="toggle-opt hidden-opt" [class.active]="!isModuleActive"
+          (click)="toggleModule(false)">
+          <span class="dot"></span> DISABLED
+        </button>
+      </div>
+
+      <button class="btn-primary-action" (click)="toggleForm()">
+        {{ showForm ? '✕ Cancel' : '+ Add Feature' }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Add / Edit Form -->
+  <div class="glass-section mb-4" *ngIf="showForm">
+    <div class="section-header">
+      <h2>{{ isEditMode ? '✎ Edit' : '+ Create' }} Feature Milestone</h2>
+    </div>
+
+    <form [formGroup]="featureForm" (ngSubmit)="onSubmit()" class="modern-form" autocomplete="off">
+      <div class="form-grid">
+
+        <!-- Title -->
+        <div class="form-group floating-label">
+          <input type="text" formControlName="title" placeholder=" " id="ft-title" autocomplete="off" />
+          <label for="ft-title">Feature Title *</label>
+        </div>
+
+        <!-- Order -->
+        <div class="form-group floating-label">
+          <input type="number" formControlName="order" placeholder=" " id="ft-order" min="1" />
+          <label for="ft-order">Display Order *</label>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group full-width floating-label">
+          <textarea formControlName="description" placeholder=" " id="ft-desc"></textarea>
+          <label for="ft-desc">Feature Description *</label>
+        </div>
+
+        <!-- Active Toggle -->
+        <div class="form-group toggle-group">
+          <label class="toggle-label" style="font-weight: 700; color: var(--admin-text); font-size: 0.95rem;">Show on
+            Website</label>
+          <label class="switch">
+            <input type="checkbox" formControlName="isActive" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+
+        <!-- Multiple Image Upload -->
+        <div class="form-group full-width">
+          <label class="editor-label">
+            Feature Images
+            <span class="count-pill">{{ imagePreviews.length }} / 4</span>
+          </label>
+          <div class="multi-image-container">
+            <!-- Image Previews -->
+            <div class="image-preview-grid">
+              <div class="preview-item" *ngFor="let img of imagePreviews; let i = index" [class.is-primary]="i === 0">
+                <img [src]="img" alt="Preview" />
+
+                <div class="item-overlay">
+                  <div class="move-btns">
+                    <button type="button" class="move-btn" (click)="moveImage(i, 'left')" *ngIf="i > 0"
+                      title="Move Left">←</button>
+                    <button type="button" class="move-btn" (click)="moveImage(i, 'right')"
+                      *ngIf="i < imagePreviews.length - 1" title="Move Right">→</button>
+                  </div>
+                  <button type="button" class="remove-item-btn" (click)="removeImage(i)" title="Remove">✕</button>
+                </div>
+
+                <div class="primary-badge" *ngIf="i === 0">Main Display</div>
+              </div>
+
+              <!-- Add More Button -->
+              <div class="add-image-box" (click)="fileInput.click()" *ngIf="imagePreviews.length < 4">
+                <div class="add-icon">+</div>
+                <span>Add Image</span>
+                <input type="file" #fileInput (change)="onImagePicked($event)" hidden accept="image/*" multiple />
+              </div>
+            </div>
+            <p class="upload-hint" *ngIf="imagePreviews.length === 0">Please upload at least one image to represent this
+              feature.</p>
+          </div>
+        </div>
+
+        <!-- Layout Position Picker -->
+        <div class="form-group full-width">
+          <label class="editor-label">
+            Image Layout Position
+            <span class="count-pill selected-layout-badge">{{ selectedLayout }}</span>
+          </label>
+
+          <ng-container *ngFor="let group of groupedLayouts">
+            <h5 class="layout-group-title">{{ group.title }}</h5>
+            <div class="layout-picker-grid mb-3">
+              <div class="layout-card" *ngFor="let layout of group.layouts"
+                [class.active]="selectedLayout === layout.key"
+                [class.disabled]="imagePreviews.length > 0 && layout.imagesRequired !== imagePreviews.length"
+                (click)="selectLayout(layout.key)" [title]="layout.description">
+
+                <!-- Mini visual preview SVG for each layout -->
+                <div class="layout-preview">
+
+                  <!-- All SFA layouts have a main phone screen -->
+                  <div class="lp-rect lp-main lp-sfa-main" [ngClass]="layout.key"></div>
+
+                  <!-- Single -->
+                  <!-- No extra snippets -->
+
+                  <!-- Duo Right -->
+                  <ng-container *ngIf="layout.key === 'duo-right'">
+                    <div class="lp-rect lp-float lp-float-r1"></div>
+                  </ng-container>
+
+                  <!-- Duo Left -->
+                  <ng-container *ngIf="layout.key === 'duo-left'">
+                    <div class="lp-rect lp-float lp-float-l1"></div>
+                  </ng-container>
+
+                  <!-- Bottom Wide / Hero Row -->
+                  <ng-container *ngIf="layout.key === 'hero-row'">
+                    <div class="lp-rect lp-float lp-float-b1"></div>
+                  </ng-container>
+
+                  <!-- Cascade Right -->
+                  <ng-container *ngIf="layout.key === 'cascade-right'">
+                    <div class="lp-rect lp-float lp-float-r1-high"></div>
+                    <div class="lp-rect lp-float lp-float-r2-low"></div>
+                  </ng-container>
+
+                  <!-- Cascade Left -->
+                  <ng-container *ngIf="layout.key === 'cascade-left'">
+                    <div class="lp-rect lp-float lp-float-l1-high"></div>
+                    <div class="lp-rect lp-float lp-float-l2-low"></div>
+                  </ng-container>
+
+                  <!-- Two Phones -->
+                  <ng-container *ngIf="layout.key === 'two-phones'">
+                    <div class="lp-rect lp-main lp-sfa-main lp-sfa-phone-2"></div>
+                  </ng-container>
+
+                  <!-- Three Phones -->
+                  <ng-container *ngIf="layout.key === 'three-phones'">
+                    <div class="lp-rect lp-main lp-sfa-main lp-sfa-phone-2"></div>
+                    <div class="lp-rect lp-main lp-sfa-main lp-sfa-phone-3"></div>
+                  </ng-container>
+
+                  <!-- Split Sides / Tilt Stack -->
+                  <ng-container *ngIf="layout.key === 'tilt-stack'">
+                    <div class="lp-rect lp-float lp-float-l-mid"></div>
+                    <div class="lp-rect lp-float lp-float-r-mid"></div>
+                  </ng-container>
+
+                  <!-- Cluster / Grid -->
+                  <ng-container *ngIf="layout.key === 'grid'">
+                    <div class="lp-rect lp-float lp-float-r1-high"></div>
+                    <div class="lp-rect lp-float lp-float-r2-low"></div>
+                    <div class="lp-rect lp-float lp-float-l-bottom"></div>
+                  </ng-container>
+
+                  <!-- Right Stack 3 -->
+                  <ng-container *ngIf="layout.key === 'cascade-right-4'">
+                    <div class="lp-rect lp-float lp-float-r1-high"></div>
+                    <div class="lp-rect lp-float lp-float-r2-mid"></div>
+                    <div class="lp-rect lp-float lp-float-r3-low"></div>
+                  </ng-container>
+
+                  <!-- Four Phones -->
+                  <ng-container *ngIf="layout.key === 'four-phones'">
+                    <div class="lp-rect lp-main lp-sfa-main lp-sfa-phone-2"></div>
+                    <div class="lp-rect lp-main lp-sfa-main lp-sfa-phone-3"></div>
+                    <div class="lp-rect lp-main lp-sfa-main lp-sfa-phone-4"></div>
+                  </ng-container>
+                </div>
+
+                <div class="layout-label">{{ layout.label }}</div>
+                <div class="layout-check" *ngIf="selectedLayout === layout.key">✓</div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+      </div>
+
+      <div class="form-actions mt-4">
+        <button type="submit" class="btn-save" [disabled]="saving">
+          <span *ngIf="!saving">{{ isEditMode ? 'Update' : 'Save' }} Milestone</span>
+          <span *ngIf="saving">Saving...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Feature List Table -->
+  <div class="content-card">
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <span>Syncing roadmap...</span>
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && features.length > 0">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Gallery</th>
+            <th>Title</th>
+
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of features">
+            <td><span class="order-num">{{ f.order }}</span></td>
+            <td>
+              <div class="gallery-stack">
+                <div class="thumb-wrap" *ngFor="let img of (f.images || []).slice(0, 3)">
+                  <img [src]="img" class="feature-mini-thumb" alt="" />
+                </div>
+                <div class="more-count" *ngIf="f.images?.length > 3">+{{ f.images.length - 3 }}</div>
+                <div class="no-images" *ngIf="!f.images || f.images.length === 0">No Images</div>
+              </div>
+            </td>
+            <td class="text-left">
+              <strong>{{ f.title }}</strong>
+            </td>
+
+            <td>
+              <span class="status-pill" [class.active]="f.isActive" [class.inactive]="!f.isActive">
+                {{ f.isActive ? 'Active' : 'Hidden' }}
+              </span>
+            </td>
+            <td class="text-right">
+              <div class="actions-wrapper">
+                <button class="action-btn edit" (click)="editFeature(f)" title="Edit">✎</button>
+                <button class="action-btn delete" (click)="deleteFeature(f.id!)" title="Delete">✕</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="!loading && features.length === 0" class="empty-state">
+      <h3>No milestones yet</h3>
+      <p>Click "+ Add Feature" to create your first roadmap step.</p>
+    </div>
+  </div>
+</div>

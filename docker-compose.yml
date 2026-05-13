@@ -1,0 +1,10 @@
+version: '3'
+services:
+  corebase:
+    build: .
+    ports:
+      - "4200:4200"
+  #  container_name: angular-ui
+   # volumes:
+    #   - ./app-ui:/usr/src/app/app-ui
+     #  - /usr/src/app/app-ui/node_modules

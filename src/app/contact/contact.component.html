@@ -1,0 +1,232 @@
+<!-- Inner Banner Start-->
+<section class="inner-hero-banner">
+  <div class="inner-hero-text">
+    <h1>Contact Us</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Contact Us</li>
+      </ol>
+    </nav>
+  </div>
+</section>
+<!-- Inner Banner End -->
+<!-- Start Contact Area -->
+<!-- <section class="contact-info">
+  <div class="list-inline-wrapper p-top-80 p-bottom-50">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          <div class="d-flex align-items-center justify-content-center contact-info-box">
+            <div class="icon"><span><i class="mdi mdi-phone-in-talk"></i></span></div>
+            <div class="contents">
+              <h6>+91 8015941173 </h6>
+              <span class="sub-text">Mon-Sat 8am - 8pm</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          <div class="d-flex align-items-center justify-content-center contact-info-box">
+            <div class="icon"><span><i class="mdi mdi-email"></i></span></div>
+            <div class="contents">
+              <h6>support@featec.in</h6>
+              <span class="sub-text">Free enquiry</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          <div class="d-flex align-items-center justify-content-center contact-info-box">
+            <div class="icon"><span><i class="mdi mdi-instagram"></i></span></div>
+            <div class="contents">
+              <h6>featecbusinesssolutions</h6>
+              <span class="sub-text">Free enquiry</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          <div class="d-flex align-items-center justify-content-center contact-info-box">
+            <div class="icon"><span><i class="mdi mdi-map-marker"></i></span></div>
+            <div class="contents">
+              <h6>Tamil Nadu,India</h6>
+              <span class="sub-text">KK Nagar,Maduari</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-4 col-sm-4">
+          <div class="d-flex align-items-center justify-content-center contact-info-box">
+            <div class="icon"><span><i class="mdi mdi-facebook"></i></span></div>
+            <div class="contents">
+              <h6>Featec Business Solutions</h6>
+              <span class="sub-text">Free enquiry</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+</section> -->
+
+<section class="contact-info">
+  <div class="list-inline-wrapper p-top-80 p-bottom-50">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 col-md-6 col-sm-6">
+          <div class="d-flex align-items-center justify-content-center contact-info-box">
+            <div class="icon"><span><i class="mdi mdi-phone-in-talk"></i></span></div>
+            <div class="contents">
+              <h6>+91 8015941173</h6>
+              <span class="sub-text">Mon-Sat 8am - 8pm</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-6">
+          <div class="d-flex align-items-center justify-content-center contact-info-box">
+            <div class="icon"><span><i class="mdi mdi-telegram"></i></span></div>
+            <div class="contents">
+              <h6>support@featec.in</h6>
+              <span class="sub-text">Free enquiry</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-12">
+          <div class="d-flex align-items-center justify-content-center contact-info-box">
+            <div class="icon"><span><i class="mdi mdi-map-marker"></i></span></div>
+            <div class="contents">
+              <h6>Tamil Nadu,India</h6>
+              <span class="sub-text">KK Nagar,Maduari</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Contact Area -->
+<!-- Start Get-In-Touch Area -->
+<section class="section getin-touch">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6 col-sm-12">
+        <h4>Let's Get In Touch</h4>
+        <div class="contact_form wow fadeInUp" data-wow-delay="0.3s" data-wow-duration="1000ms">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <input name="name" id="name" type="text" class="form-control" placeholder="Enter name..." formControlName="name"
+                  autocomplete="off" [ngClass]="{ 'is-invalid': submitted && f.name.errors}">
+
+                  <div *ngIf="submitted && f.name.errors" class="invalid-feedback ms-2">
+                    <div *ngIf="submitted && f.name.errors.required">
+                      Name is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <input name="email" id="email" type="email" class="form-control" placeholder="Enter email..." formControlName="email"
+                    autocomplete="off" [ngClass]="{ 'is-invalid': submitted && f.email.errors}">
+
+                        <div *ngIf="submitted && f.email.errors" class="invalid-feedback ms-2">
+                          <div *ngIf="submitted && f.email.errors.required">
+                            Email Address is required
+                          </div>
+                          <div *ngIf="submitted && f.email.errors.email">
+                            Email Address is not Valid
+                          </div>
+                          <div *ngIf="registerForm.controls.email.errors && registerForm.controls.email.errors.apiError">
+                            {{ registerForm.controls.email.errors.apiError }}
+                          </div>
+                        </div>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <input name="phone" id="phone" type="text" class="form-control" placeholder="Your Phone No..." formControlName="phone"
+                  autocomplete="off" [ngClass]="{ 'is-invalid': submitted && f.phone.errors}">
+
+                  <div *ngIf="submitted && f.phone.errors" class="invalid-feedback ms-2">
+                    <div *ngIf="submitted && f.phone.errors.required">
+                      Phone No is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="form-group">
+                  <textarea name="about" id="about" rows="4" class="form-control" placeholder="Your message..." formControlName="about"></textarea>
+                </div>
+              </div><br><br><br>
+             
+              <!-- <div class="col-sm-12 mb-2">
+                <re-captcha id="recaptcha" name="recaptcha" #recaptcha="ngModel" [(ngModel)]="token" required
+                  [class.is-invalid]="recaptcha.invalid && (recaptcha.dirty || recaptcha.touched)"></re-captcha> -->
+                <!-- <div *ngIf="recaptcha.invalid && (recaptcha.dirty || recaptcha.touched)" class="invalid-feedback">
+                  <div *ngIf="recaptcha.errors?.['required']">This field is required.</div>
+                </div> -->
+                  <!-- <re-captcha formControlName="recaptchaReactive" siteKey="6Ld5q4gjAAAAACkCy38_IMRMtYiw_K2PCRn0b1Pn">
+                  </re-captcha> -->
+               
+              <!-- </div> -->
+             
+              <div class="col-lg-12">
+                <div class="d-flex justify-content-start">
+                  <!-- <button type="submit" class="btn btn-sm theme-btn text-white text-uppercase send-btn">Send Message</button> -->
+                  <button class="btn btn-sm theme-btn text-white text-uppercase send-btn" type="submit" [disabled]="loading">
+                    <span *ngIf="loading">
+                      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      <span>Sending...</span>
+                    </span>
+                    <span *ngIf="!loading">
+                      <i class="feather icon-save me-1"></i>
+                      <span>Send Message</span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+                         
+
+              <!-- <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-success w-md">Send Message <i class="bi bi-arrow-right"></i></button>
+              </div> -->
+
+              <!-- <div *ngIf="tokenVisible"> reCAPTCHA Token <br />
+                <p style="color: 
+              red">{{reCAPTCHAToken}}</p>
+              </div> -->
+              
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-6 col-sm-12 ps-5">
+        <!-- <div id="map"></div> -->
+
+            <div style="max-width:100%;list-style:none; transition: none;overflow:hidden;width:500px;height:500px;">
+              <div id="embedded-map-display" style="height:100%; width:100%;max-width:100%;"><iframe
+                  style="height:100%;width:100%;border:0;" frameborder="0"
+                  src="https://www.google.com/maps/embed/v1/place?q=Featec+Business+Solutions,+Bharathiyar+Street,+Managiri,+KK+Nagar,+Tamil+Nadu,+India&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"></iframe>
+              </div><a class="googl-ehtml" href="https://www.bootstrapskins.com/themes" id="grab-map-data">premium bootstrap
+                themes</a>
+              <style>
+                #embedded-map-display img.text-marker {
+                  max-width: none !important;
+                  background: none !important;
+                }
+            
+                img {
+                  max-width: none
+                }
+              </style>
+            </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Get-In-Touch Area -->

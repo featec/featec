@@ -1,0 +1,116 @@
+<section class="rm-section" *ngIf="moduleActive">
+  <div class="rm-atmosphere" aria-hidden="true">
+    <div class="rm-nature-bg" aria-hidden="true">
+  <div class="rm-sky-spring rm-sky-layer"></div>
+  <div class="rm-sky-summer rm-sky-layer"></div>
+  <div class="rm-sky-autumn rm-sky-layer"></div>
+  <div class="rm-sky-winter rm-sky-layer"></div>
+  <div class="rm-cloud rm-cloud-1"></div>
+      <!-- Redundant rm-sky removed -->
+
+      <!-- Left side clouds -->
+      <div class="rm-cloud rm-cloud-1"></div>
+      <div class="rm-cloud rm-cloud-2"></div>
+      <div class="rm-cloud rm-cloud-3"></div>
+      <div class="rm-cloud rm-cloud-4"></div>
+
+      <!-- Right side clouds -->
+      <div class="rm-cloud rm-cloud-5"></div>
+      <div class="rm-cloud rm-cloud-6"></div>
+      <div class="rm-cloud rm-cloud-7"></div>
+      <div class="rm-cloud rm-cloud-8"></div>
+
+      <!-- Fireflies -->
+      <div class="rm-firefly rm-ff-1"></div>
+      <div class="rm-firefly rm-ff-2"></div>
+      <div class="rm-firefly rm-ff-3"></div>
+      <div class="rm-firefly rm-ff-4"></div>
+      <div class="rm-firefly rm-ff-5"></div>
+      <div class="rm-firefly rm-ff-6"></div>
+    </div>
+
+    <div class="rm-orb rm-orb-1"></div>
+    <div class="rm-orb rm-orb-2"></div>
+    <div class="rm-grid"></div>
+  </div>
+
+  <div class="container">
+
+    <!-- Loader -->
+    <div *ngIf="loading" class="rm-loader">
+      <div class="spin"></div>
+    </div>
+
+    <!-- Journey -->
+    <div *ngIf="!loading && features.length > 0" class="rm-journey">
+
+      <!-- SVG Road -->
+      <svg
+        class="rm-road-svg"
+        [attr.viewBox]="svgViewBox"
+        preserveAspectRatio="xMidYMid meet"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true">
+        <path
+          [attr.d]="roadBody"
+          fill="none"
+          stroke="rgba(49,69,132,0.1)"
+          stroke-width="40"
+          stroke-linecap="round"
+          stroke-linejoin="round" />
+        <path
+          [attr.d]="roadDash"
+          fill="none"
+          stroke="#ffffff"
+          stroke-width="3"
+          stroke-dasharray="12 20"
+          stroke-linecap="round" />
+      </svg>
+
+      <!-- Feature Stops -->
+      <div class="rm-stops">
+        <div
+          class="rm-stop rm-anim-hidden"
+          *ngFor="let f of features; let i = index"
+          [class.stop-left]="i % 2 === 0"
+          [class.stop-right]="i % 2 !== 0"
+          [attr.data-season]="getSeasonClass(i)">
+
+          <div class="rm-stop-container">
+
+            <!-- Screenshots -->
+            <div
+              class="rm-screens-wrap rm-anim-child"
+              [class]="'rm-screens-wrap layout-' + (f.layoutPosition || 'single')">
+              <div
+                class="rm-screen-layer"
+                *ngFor="let img of f.safeImages; let imgIdx = index"
+                [attr.data-idx]="imgIdx">
+                <div class="rm-screen-inner">
+                  <img [src]="img" [alt]="f.title" loading="lazy" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Text Card -->
+            <div class="rm-text-card rm-anim-child">
+              <div class="rm-text-header">
+                <span class="rm-number-tag">{{ i + 1 }}</span>
+              </div>
+              <h3 class="rm-card-title">{{ f.title }}</h3>
+              <div class="rm-desc" [innerHTML]="f.description"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && features.length === 0" class="rm-empty">
+      No feature stops added yet.
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,129 @@
+<!-- src/app/admin/metadata-management/metadata-management.component.html -->
+<div class="main-content">
+  <header class="content-header">
+    <div class="header-titles">
+      <span class="breadcrumb-mini">System / Metadata</span>
+      <h1>SEO Metadata</h1>
+      <p>Optimize your pages for search engines and social sharing.</p>
+    </div>
+  </header>
+
+  <div class="metadata-workspace">
+    <!-- Page Selector -->
+    <div class="pages-sidebar">
+      <div class="sidebar-title">Website Pages</div>
+      <div class="page-list">
+        <div 
+          *ngFor="let page of pages" 
+          [class.active]="selectedPage === page.slug" 
+          (click)="loadPageMeta(page.slug)"
+          class="page-item">
+          {{ page.label }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Editor Section -->
+    <div class="editor-main">
+      <div class="editor-glass-card">
+        <div class="editor-header">
+          <h2>Editing: {{ selectedPageLabel }}</h2>
+        </div>
+
+        <div *ngIf="loading" class="loading-state">
+          <div class="spinner"></div>
+        </div>
+
+        <form [formGroup]="metaForm" (ngSubmit)="onSave()" *ngIf="!loading" class="meta-form">
+          <div class="form-group">
+            <label>Page Title</label>
+            <textarea formControlName="title" rows="2" placeholder="Catchy title for browser tabs"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Meta Description</label>
+            <textarea formControlName="description" rows="4" placeholder="Brief summary for search results"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Keywords</label>
+            <textarea formControlName="keywords" rows="2" placeholder="keyword1, keyword2..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" [disabled]="saving" class="btn-save">
+              {{ saving ? 'Saving Changes...' : 'Update Metadata' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Preview Section -->
+      <div class="preview-workspace" *ngIf="savedData">
+        <div class="editor-header">
+          <h2>Current Configuration</h2>
+          <div class="sync-pill">
+            <span class="pulse-dot"></span>
+            Live on Website
+          </div>
+        </div>
+
+        <div class="preview-cards-grid">
+          <div class="preview-card" [class.recently-updated]="recentlyUpdatedFields.includes('title')">
+            <div class="card-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M4 7V4h16v3M9 20h6M12 4v16"></path>
+              </svg>
+            </div>
+            <div class="card-body">
+              <label>Page Title</label>
+              <p>{{ savedData.title || 'Not Set' }}</p>
+            </div>
+          </div>
+
+          <div class="preview-card" [class.recently-updated]="recentlyUpdatedFields.includes('description')">
+            <div class="card-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div class="card-body">
+              <label>Meta Description</label>
+              <p>{{ savedData.description || 'Not Set' }}</p>
+            </div>
+          </div>
+
+          <div class="preview-card" [class.recently-updated]="recentlyUpdatedFields.includes('keywords')">
+            <div class="card-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+              </svg>
+            </div>
+            <div class="card-body">
+              <label>Keywords</label>
+              <p>{{ savedData.keywords || 'Not Set' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="last-updated-footer">
+          <div class="sync-info">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Last Sync: {{ (savedData.updatedAt?.toDate() | date:'medium') || 'Just now' }}</span>
+          </div>
+          <div class="author-info" *ngIf="savedData.lastUpdatedBy">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Updated By: <strong>{{ savedData.lastUpdatedBy }}</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

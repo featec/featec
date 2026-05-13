@@ -1,0 +1,143 @@
+<!-- Inner Banner Start-->
+<section class="inner-hero-banner">
+  <div class="inner-hero-text">
+    <h1>Blog</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Blog</li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+
+<!-- src/app/blog/blog.component.html -->
+<section class="blog-section">
+  <div class="container">
+    <div class="section-header">
+      <h1>Our Blog</h1>
+      <p>Latest news, insights and updates from Featec</p>
+    </div>
+
+    <!-- Search and Filter Controls -->
+    <div class="blog-controls" *ngIf="!loading">
+      <div class="search-box">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" [value]="searchTerm" (input)="onSearch($any($event.target).value)"
+          placeholder="Search articles..." />
+      </div>
+
+      <div class="category-nav-container" *ngIf="categories.length > 1">
+        <button class="scroll-btn left" *ngIf="categories.length > 5" (click)="scrollCategories(-200)"
+          aria-label="Scroll left">‹</button>
+
+        <div class="category-scroll-wrapper" #categoryScroll>
+          <div class="category-filter-bar">
+            <button *ngFor="let cat of categories" class="filter-btn" [class.active]="selectedCategory === cat.name"
+              (click)="applyFilter(cat.name)">
+              {{ cat.name }}
+            </button>
+          </div>
+        </div>
+
+        <button class="scroll-btn right" *ngIf="categories.length > 5" (click)="scrollCategories(200)"
+          aria-label="Scroll right">›</button>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="loading-wrapper">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && filteredBlogs.length === 0" class="empty-state">
+      <p *ngIf="!searchTerm && selectedCategory === 'All'">No blogs published yet. Check back soon!</p>
+      <p *ngIf="searchTerm">No blogs found matching "<strong>{{ searchTerm }}</strong>"{{ selectedCategory !== 'All' ? '
+        in ' + selectedCategory : '' }}.</p>
+      <p *ngIf="!searchTerm && selectedCategory !== 'All'">No blogs found in <strong>{{ selectedCategory }}</strong>
+        category.</p>
+      <button class="btn-reset" (click)="onSearch(''); applyFilter('All')">Clear all filters</button>
+    </div>
+
+    <!-- Main Blog Grid (Filtered/Searched) -->
+    <div *ngIf="!loading && pagedBlogs.length > 0" class="blog-grid">
+      <div class="blog-card" *ngFor="let blog of pagedBlogs">
+        <div class="blog-image">
+          <a [routerLink]="['/blog', blog.slug]">
+            <img [src]="blog.featuredImage" [alt]="blog.title" />
+          </a>
+        </div>
+        <div class="blog-content">
+          <div class="blog-meta">
+            <span>{{ blog.author }}</span>
+            <span *ngIf="blog.readingTime">• {{ blog.readingTime }} min read</span>
+          </div>
+          <h2><a [routerLink]="['/blog', blog.slug]">{{ blog.title }}</a></h2>
+          <p>{{ blog.excerpt }}</p>
+          <a [routerLink]="['/blog', blog.slug]" class="read-more-btn">Read Full Story →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="!loading && totalPages > 1">
+      <button class="page-btn" [disabled]="currentPage === 1" (click)="setPage(currentPage - 1)">
+        <span class="arrow">←</span> Previous
+      </button>
+
+      <div class="page-numbers">
+        <button *ngFor="let page of pages" class="page-btn number" [class.active]="currentPage === page"
+          (click)="setPage(page)">
+          {{ page }}
+        </button>
+      </div>
+
+      <button class="page-btn" [disabled]="currentPage === totalPages" (click)="setPage(currentPage + 1)">
+        Next <span class="arrow">→</span>
+      </button>
+    </div>
+
+    <!-- Grouped Categories Section (Only when All is selected) -->
+    <div class="categorized-sections" *ngIf="!loading && selectedCategory === 'All' && !searchTerm">
+      <div class="section-divider">
+        <span>Browse by Category</span>
+      </div>
+
+      <div class="category-group" *ngFor="let cat of categories | slice:1">
+        <div class="group-header" *ngIf="getBlogsByCategory(cat.name).length > 0">
+          <h2>{{ cat.name }}</h2>
+          <button class="view-all-link" (click)="applyFilter(cat.name); scrollToTop()">View All</button>
+        </div>
+
+        <!-- Sliding Carousel for Categories -->
+        <div class="carousel-container" *ngIf="getBlogsByCategory(cat.name).length > 0">
+          <div class="carousel-track" [style.transform]="getScrollTransform(cat.name)">
+            <div class="mini-card-wrapper" *ngFor="let blog of getBlogsByCategory(cat.name); trackBy: trackByBlogId">
+              <div class="mini-card">
+                <div class="mini-img">
+                  <a [routerLink]="['/blog', blog.slug]">
+                    <img [src]="blog.featuredImage" [alt]="blog.title" />
+                  </a>
+                </div>
+                <div class="mini-content">
+                  <div class="mini-meta">
+                    <span class="mini-date">{{ formatDate(blog.createdAt) }}</span>
+                    <span class="mini-read-time" *ngIf="blog.readingTime">• {{ blog.readingTime }} min read</span>
+                  </div>
+                  <h2><a [routerLink]="['/blog', blog.slug]">{{ blog.title }}</a></h2>
+                  <!-- <p class="mini-excerpt">{{ blog.excerpt }}</p> -->
+                  <a [routerLink]="['/blog', blog.slug]" class="mini-link">Read Story →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

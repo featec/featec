@@ -1,0 +1,167 @@
+<!-- src/app/admin/blog-management/blog-list/blog-list.component.html -->
+<div class="main-content">
+  <header class="content-header">
+    <div class="header-titles">
+      <span class="breadcrumb-mini">Management / Blogs</span>
+      <h1>Blog Management</h1>
+      <p>Create, edit, and organize your company's insights.</p>
+    </div>
+    <div class="header-actions">
+      <div class="filter-group">
+        <div class="select-box">
+          <svg class="select-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <select [(ngModel)]="selectedCategory">
+            <option value="">All Categories</option>
+            <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+          </select>
+        </div>
+
+        <!-- Redesigned Limit Chips -->
+        <div class="limit-chips-wrapper">
+          <span class="limit-label">Limit:</span>
+          <div class="limit-chips">
+            <button 
+              *ngFor="let size of pageSizeOptions" 
+              class="limit-chip" 
+              [class.active]="pageSize === size"
+              (click)="pageSize = size; onPageSizeChange()">
+              {{ size }}
+            </button>
+          </div>
+        </div>
+
+        <div class="search-box">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Quick search..." />
+          <button class="clear-search-btn" *ngIf="searchTerm" (click)="searchTerm = ''" title="Clear search">✕</button>
+        </div>
+      </div>
+      <a routerLink="/admin/blogs/new" class="btn-primary-action">+ New Blog</a>
+    </div>
+  </header>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Fetching blogs...</span>
+  </div>
+
+  <div *ngIf="!loading" class="content-card">
+    <div *ngIf="blogs.length === 0" class="empty-state">
+      <div class="empty-icon">📝</div>
+      <h3>No blogs yet</h3>
+      <p>Start your content journey by creating your first blog post.</p>
+      <a routerLink="/admin/blogs/new" class="btn-primary-admin">Create Now</a>
+    </div>
+
+    <div *ngIf="blogs.length > 0 && allFilteredBlogs.length === 0" class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>No matches found</h3>
+      
+      <p *ngIf="searchTerm && !selectedCategory">We couldn't find any blogs matching "<strong>{{ searchTerm }}</strong>"</p>
+      <p *ngIf="selectedCategory && !searchTerm">No blogs found in the <strong>{{ selectedCategory }}</strong> category.</p>
+      <p *ngIf="searchTerm && selectedCategory">No blogs matching "<strong>{{ searchTerm }}</strong>" were found in <strong>{{ selectedCategory }}</strong>.</p>
+      
+      <button class="btn-secondary-admin" (click)="clearFilters()">Clear all filters</button>
+    </div>
+
+    <div class="table-responsive" *ngIf="allFilteredBlogs.length > 0">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Author</th>
+            <th>Last Edited By</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let blog of paginatedBlogs">
+              <td data-label="Insight">
+                <div class="blog-info-cell">
+                  <img [src]="blog.featuredImage || 'assets/images/placeholder.png'" class="blog-mini-thumb" [alt]="blog.title">
+                  <div class="blog-text-content">
+                    <span class="blog-title-text">{{ blog.title }}</span>
+                    <span class="blog-slug">{{ blog.slug }}</span>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Category">
+                <span class="category-tag">{{ blog.category }}</span>
+              </td>
+              <td data-label="Author">
+                <div class="author-info">
+                  <span>{{ blog.author || 'Not Set' }}</span>
+                </div>
+              </td>
+              <td data-label="Last Edited By">
+                <div class="admin-tracking" *ngIf="blog.lastUpdatedBy">
+                  <span class="admin-badge">{{ blog.lastUpdatedBy }}</span>
+                  <small class="update-time">{{ (blog.lastUpdatedAt?.toDate() | date:'shortDate') || 'Recently' }}</small>
+                </div>
+                <span *ngIf="!blog.lastUpdatedBy" class="text-muted">-</span>
+              </td>
+              <td data-label="Status">
+                <span class="status-badge" [ngClass]="blog.status">
+                  {{ isScheduledPublished(blog) ? 'Published' : blog.status }}
+                </span>
+              </td>
+              <td class="col-actions">
+                <div class="actions-wrapper">
+                  <a [routerLink]="['/admin/blogs/edit', blog.id]" class="action-btn edit" title="Edit Insight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </a>
+                  <button class="action-btn delete" (click)="deleteBlog(blog.id)" title="Delete Insight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      <line x1="10" y1="11" x2="10" y2="17"></line>
+                      <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-footer" *ngIf="!loading && allFilteredBlogs.length > 0">
+      <div class="pagination-summary">
+        Showing <strong>{{ (currentPage - 1) * pageSize + 1 }}</strong> to 
+        <strong>{{ (currentPage * pageSize) > totalResults ? totalResults : (currentPage * pageSize) }}</strong> 
+        of <strong>{{ totalResults }}</strong> insights
+      </div>
+      
+      <div class="pagination-actions">
+        <button class="pag-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+          Previous
+        </button>
+        
+        <div class="page-numbers">
+          <button 
+            *ngFor="let p of [].constructor(totalPages); let i = index" 
+            class="page-num" 
+            [class.active]="currentPage === (i + 1)"
+            (click)="goToPage(i + 1)">
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <button class="pag-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

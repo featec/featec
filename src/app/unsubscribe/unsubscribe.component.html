@@ -1,0 +1,33 @@
+<div class="unsubscribed-page">
+    <div class="unsubscribed-content">
+    <form [formGroup]="unsubscribeForm">
+
+        <img src="assets/images/GVS.png" alt="Your Logo" style="width: 150px; height: auto; margin-bottom: 20px;">
+        <h1>Unsubscribe</h1>
+        <h2>We're sorry to see you go!</h2>
+        <p>Are you sure you want to unsubscribe <strong>{{ email }}</strong> from our mailing list?</p>
+        
+        <div class="dropdown-container">
+            <label for="reason">Select a reason:</label>
+            <select formControlName="reason" id="reason" name="reason" class="custom-dropdown" required>
+                <option value="your_emails_are_not_relevant_to_me">Your emails are not relevant to me</option>
+                <option value="your_emails_are_too_frequent">Your emails are too frequent</option>
+                <option value="i_don't_remember_signing_up_for_this">I don't remember signing up for this</option>
+                <option value="i_no_longer_want_to_receive_these_emails">I no longer want to receive these emails</option>
+                <option value="the_emails_are_spam_and_should_be_reported">The emails are spam and should be reported</option>
+                <option value="others">Others</option>
+            </select>
+        
+            <div *ngIf="submitted && f.reason.errors">
+                <div *ngIf="submitted && f.reason.errors.required" class="error-message">
+                    Please select a reason
+                </div>
+            </div>
+        </div>
+        
+        <button class="formEmailButton" (click)="unsubscribe()">Yes, Unsubscribe me</button>
+         <p>If you change your mind, don't hesitate to reach out.</p>
+        
+    </form>
+ </div>
+</div>

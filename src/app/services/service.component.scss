@@ -1,0 +1,211 @@
+/*==========================
+        7.FEATURES
+============================*/
+
+.app-feature-block {
+    padding: 25px;
+    background: #fff;
+    margin-top: 30px;
+    cursor: pointer;
+    -moz-box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.09);
+    -webkit-box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.09);
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.09);
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    width: 350px;
+    height: 300px;
+  }
+  /* .app-features-blocks {
+     padding: 25px; 
+    background: #fff;
+    margin-top: 30px;
+    margin-bottom: 0px;
+    cursor: pointer;
+    -moz-box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.09);
+    -webkit-box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.09);
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.09);
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    width: 300px;
+    height: 160px;
+  } */
+  
+  .app-feature-blocks {
+    padding: 25px;
+    background: #fff;
+    margin-top: 30px;
+    cursor: pointer;
+    -moz-box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.09);
+    -webkit-box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.09);
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.09);
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    width: 350px;
+    height: 350px;
+  }
+  
+  .circles.fetures-circles {
+    z-index: 0
+  }
+  
+    .circles.fetures-circles li {
+      background: rgba(49,69,132,0.1)
+    }
+  
+  .features-info {
+    position: relative;
+    z-index: 1;
+    bottom:0;
+  }
+  
+  .steps-hover-thumb {
+    // background: url('../images/features/step-hover-img.jpg');
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    visibility: hidden;
+    background-size: cover;
+    -webkit-transition: .4s;
+    -o-transition: .4s;
+    transition: .4s;
+  }
+  
+    .steps-hover-thumb::before {
+      background-color: rgba(255,57,70,.8);
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+    }
+  
+  .app-feature-block:hover .steps-hover-thumb {
+    background-position: center center;
+    opacity: 1;
+    visibility: visible;
+  }
+  .app-feature-blocks:hover .steps-hover-thumb {
+    background-position: center center;
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .featured-icons {
+    margin-bottom: 10px;
+  }
+  
+    .featured-icons i {
+      font-size: 50px;
+      display: flex;
+      line-height: 50px;
+      align-items: center;
+      justify-content: flex-start;
+      color: #314584;
+      -webkit-transition: .3s;
+      -o-transition: .3s;
+      transition: .3s;
+    }
+  
+  .app-feature-block:hover .featured-icons i {
+    color: #fff;
+  }
+  .app-feature-blocks:hover .featured-icons i {
+    color: #fff;
+  }
+  
+  .app-feature-block h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #314584;
+    -webkit-transition: .3s;
+    -o-transition: .3s;
+    transition: .3s;
+  }
+  
+  .app-feature-block .text {
+    
+    padding-bottom: 5px;
+    font-size: 14px;
+    line-height: 25px;
+    -webkit-transition: .3s;
+    -o-transition: .3s;
+    transition: .3s;
+  }
+  
+  .app-feature-blocks h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #314584;
+    -webkit-transition: .3s;
+    -o-transition: .3s;
+    transition: .3s;
+  }
+  
+  
+  .app-feature-blocks .text {
+    font-size: 16px;
+    line-height: 25px;
+    -webkit-transition: .3s;
+    -o-transition: .3s;
+    transition: .3s;
+  }
+  /* 
+  .app-feature-block:hover h3, .app-feature-block:hover .text {
+    color: #fff;
+  } */
+  /*7.1 FEATURE CONTENT AREA*/
+  .bullet--list li {
+    position: relative;
+    padding-left: 1.66rem;
+    margin-bottom: .66rem;
+  }
+  
+    .bullet--list li::before {
+      position: absolute;
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      left: 0;
+      top: 7px;
+      background: #FF3D4A;
+    }
+  
+
+  .app-feature-block img {
+    width: 200px;
+    height: 100px;
+  }
+  .accordion-body
+  {
+    background: #FF3D4A !important;
+    color: white !important;
+    font-size: 15px !important;
+  }
+  .accordion-button:not(.collapsed)
+  {
+    background: #FF3D4A !important;
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 18px !important;
+  }
+  .accordion-button:not(.collapsed):after
+  {
+    color: #fff;
+  }
+  

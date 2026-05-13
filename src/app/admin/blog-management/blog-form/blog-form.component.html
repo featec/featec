@@ -1,0 +1,254 @@
+<!-- src/app/admin/blog-management/blog-form/blog-form.component.html -->
+<div class="main-content">
+  <header class="content-header">
+    <div class="header-titles">
+      <span class="breadcrumb-mini">Blogs / {{ isEditMode ? 'Edit' : 'Create' }}</span>
+      <h1>{{ isEditMode ? 'Edit Insight' : 'Craft New Insight' }}</h1>
+      <p>Your ideas deserve a premium presentation.</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/admin/blogs" class="btn-secondary-action">Cancel</a>
+      <button type="submit" form="blogForm" [disabled]="saving" class="btn-primary-action">
+        {{ saving ? 'Processing...' : (isEditMode ? 'Update Now' : 'Publish Blog') }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Form Skeleton (Premium Loading State) -->
+  <div *ngIf="loading" class="form-skeleton-layout">
+    <div class="skeleton-main">
+      <div class="glass-section skeleton-pulse">
+        <div class="skeleton-header"></div>
+        <div class="skeleton-input"></div>
+        <div class="skeleton-input large"></div>
+        <div class="skeleton-editor"></div>
+      </div>
+    </div>
+    <div class="skeleton-side">
+      <div class="glass-section skeleton-pulse" *ngFor="let i of [1,2,3,4]">
+        <div class="skeleton-header"></div>
+        <div class="skeleton-input"></div>
+      </div>
+    </div>
+  </div>
+
+  <form [formGroup]="blogForm" (ngSubmit)="onSave()" id="blogForm" *ngIf="!loading" class="modern-form-layout">
+    <!-- Left Column: Main Content -->
+    <div class="form-main-column">
+      <div class="glass-section">
+        <div class="section-header">
+          <span class="section-badge">01</span>
+          <h2>Content Area</h2>
+          <span class="legend-text"><span class="req-star">*</span> Required fields</span>
+        </div>
+
+        <div class="form-group floating-label">
+          <textarea formControlName="title" rows="1" placeholder=" "
+            style="min-height: 56px; padding-top: 20px;"></textarea>
+          <label>Insight Title <span class="req-star">*</span></label>
+        </div>
+
+        <div class="form-group floating-label">
+          <textarea formControlName="excerpt" rows="2" placeholder=" "></textarea>
+          <label>Brief Excerpt <span class="req-star">*</span></label>
+        </div>
+
+        <div class="form-group editor-container" (click)="focusEditor()">
+          <label class="static-label">Full Narrative <span class="req-star">*</span></label>
+
+          <!-- Custom Toolbar with Reliable Tooltips -->
+          <div id="quill-toolbar" class="custom-toolbar">
+            <span class="ql-formats" title="Text Style | Headers & Normal">
+              <select class="ql-header">
+                <option value="2">Heading 2</option>
+                <option value="3">Heading 3</option>
+                <option value="4">Heading 4</option>
+                <option selected>Normal</option>
+              </select>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-bold" title="Bold (Ctrl+B) | Emphasize text"></button>
+              <button class="ql-italic" title="Italic (Ctrl+I) | Slant text"></button>
+              <button class="ql-underline" title="Underline (Ctrl+U) | Add line below"></button>
+              <button class="ql-blockquote" title="Quote | Add blockquote"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-list" value="ordered" title="Numbered List | Sequential order"></button>
+              <button class="ql-list" value="bullet" title="Bullet List | Point-wise"></button>
+            </span>
+            <span class="ql-formats" title="Alignment | Text Position">
+              <select class="ql-align">
+                <option selected></option>
+                <option value="center"></option>
+                <option value="right"></option>
+              </select>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-link" title="Insert Link | Add hyperlink"></button>
+              <button class="ql-clean" title="Clear Format | Remove all styles"></button>
+            </span>
+          </div>
+
+          <quill-editor #quillEditor formControlName="content" format="html" [modules]="{ toolbar: '#quill-toolbar' }"
+            (onEditorCreated)="onEditorCreated($event)" placeholder="Tell your story..." class="quill-editor"
+            [class.is-invalid]="blogForm.get('content').invalid && blogForm.get('content').touched"></quill-editor>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Meta & Sidebar -->
+    <div class="form-side-column">
+      <!-- Publishing Stats -->
+      <div class="glass-section">
+        <div class="section-header">
+          <span class="section-badge">02</span>
+          <h2>Publishing</h2>
+        </div>
+
+        <div class="form-group">
+          <label>Current Status <span class="req-star">*</span></label>
+          <div class="status-toggle-group">
+            <label class="status-btn" [class.active]="blogForm.get('status')?.value === 'draft'">
+              <input type="radio" formControlName="status" value="draft">
+              <span>Draft</span>
+            </label>
+            <label class="status-btn" [class.active]="blogForm.get('status')?.value === 'published'">
+              <input type="radio" formControlName="status" value="published">
+              <span>Published</span>
+            </label>
+            <label class="status-btn" [class.active]="blogForm.get('status')?.value === 'scheduled'">
+              <input type="radio" formControlName="status" value="scheduled">
+              <span>Scheduled</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="blogForm.get('status')?.value === 'scheduled'">
+          <label>Publication Date <span class="req-star">*</span></label>
+          <input type="datetime-local" formControlName="scheduledDate" class="modern-input" />
+        </div>
+
+        <div class="form-group">
+          <label>Slug (URL Identifier) <span class="req-star">*</span></label>
+          <input type="text" formControlName="slug" class="modern-input" placeholder="e.g. future-of-tech" />
+        </div>
+      </div>
+
+      <!-- Meta Information -->
+      <div class="glass-section">
+        <div class="section-header">
+          <span class="section-badge">03</span>
+          <h2>Attributes</h2>
+        </div>
+
+        <div class="form-group">
+          <label>Category <span class="req-star">*</span></label>
+          <div class="category-manager">
+            <div class="custom-select" *ngIf="!showAddCategory">
+              <select formControlName="category">
+                <option value="" disabled selected>Choose category</option>
+                <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+              </select>
+            </div>
+
+            <div class="inline-add" *ngIf="showAddCategory">
+              <input type="text" [(ngModel)]="newCategoryName" [ngModelOptions]="{standalone: true}"
+                placeholder="Enter category name..." (keyup.enter)="addNewCategory()" />
+              <button type="button" class="btn-confirm-add" (click)="addNewCategory()" [disabled]="addingCategory">
+                {{ addingCategory ? '...' : 'Add' }}
+              </button>
+            </div>
+
+            <button type="button" class="toggle-cat-btn" (click)="toggleAddCategory()">
+              {{ showAddCategory ? 'Back' : '+ Add New' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group floating-label has-clear">
+          <input type="number" formControlName="readingTime" placeholder=" " min="1"
+            (keydown)="onNumberKeyDown($event)" />
+          <label>Reading Time (mins)</label>
+          <button type="button" class="btn-clear-field" *ngIf="blogForm.get('readingTime')?.value"
+            (click)="blogForm.get('readingTime')?.setValue(null)" title="Clear time">✕</button>
+        </div>
+
+        <div class="form-group floating-label">
+          <input type="text" formControlName="author" placeholder=" " />
+          <label>Author Name</label>
+        </div>
+
+        <div class="form-group floating-label">
+          <input type="text" formControlName="tags" placeholder=" " />
+          <label>Tags (Comma separated)</label>
+        </div>
+      </div>
+
+      <!-- Featured Media -->
+      <div class="glass-section">
+        <div class="section-header">
+          <span class="section-badge">04</span>
+          <h2>Featured Image <span class="req-star">*</span></h2>
+        </div>
+
+        <div class="image-dropzone" [class.has-image]="imagePreview"
+          [class.is-invalid]="blogForm.get('featuredImage').invalid && blogForm.get('featuredImage').touched">
+          <input type="file" (change)="onImagePicked($event)" accept="image/*" class="file-input" />
+
+          <div class="dropzone-content" *ngIf="!imagePreview && !imageUploading">
+            <div class="drop-icon">📸</div>
+            <span>Click or Drop Image</span>
+            <small>Max size: 2MB</small>
+          </div>
+
+          <div class="dropzone-loader" *ngIf="imageUploading">
+            <div class="spinner-small"></div>
+            <span>Optimizing...</span>
+          </div>
+
+          <div class="dropzone-preview" *ngIf="imagePreview">
+            <img [src]="imagePreview" alt="Preview" />
+            <div class="preview-overlay">
+              <span>Change Image</span>
+            </div>
+            <button type="button" class="btn-remove-image" (click)="removeImage($event)" title="Remove Image">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- SEO & Metadata -->
+      <div class="glass-section">
+        <div class="section-header">
+          <span class="section-badge">05</span>
+          <h2>SEO & Search</h2>
+        </div>
+        <div class="form-group floating-label">
+          <textarea formControlName="metaTitle" rows="1" placeholder=" "
+            style="min-height: 56px; padding-top: 20px;"></textarea>
+          <label>Page Title</label>
+          <small class="help-text"
+            style="color: #64748b; font-size: 0.75rem; display: block; margin-top: 8px;">Optimal length: 50-60
+            characters</small>
+        </div>
+        <div class="form-group floating-label">
+          <textarea formControlName="metaDescription" rows="3" placeholder=" "></textarea>
+          <label>Description</label>
+          <small class="help-text"
+            style="color: #64748b; font-size: 0.75rem; display: block; margin-top: 8px;">Optimal length: 150-160
+            characters</small>
+        </div>
+        <div class="form-group floating-label">
+          <textarea formControlName="metaKeywords" rows="1" placeholder=" "
+            style="min-height: 56px; padding-top: 20px;"></textarea>
+          <label>Keywords</label>
+          <small class="help-text" style="color: #64748b; font-size: 0.75rem; display: block; margin-top: 8px;">Comma
+            separated keywords</small>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

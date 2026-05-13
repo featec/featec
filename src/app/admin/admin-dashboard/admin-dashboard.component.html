@@ -1,0 +1,162 @@
+<!-- src/app/admin/admin-dashboard/admin-dashboard.component.html -->
+<div class="main-content">
+  <header class="content-header">
+    <div class="header-info">
+      <span class="breadcrumb-mini">Overview / Dashboard</span>
+      <h1>Welcome Back, {{ authService.getUserDisplayName().split(' ')[0] }}</h1>
+      <p>Here's what's happening with your content today.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="ngOnInit()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 4v6h-6"></path>
+          <path d="M1 20v-6h6"></path>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </button>
+      <a routerLink="/admin/blogs/new" class="btn-primary-action">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Create New Post
+      </a>
+    </div>
+  </header>
+
+  <!-- Stats Section -->
+  <section class="stats-container">
+    <div class="stat-glass-card">
+      <div class="stat-header">
+        <div class="stat-icon-wrapper blue">📝</div>
+        <span class="stat-label">Total Blogs</span>
+      </div>
+      <div class="stat-value">{{ totalBlogs }}</div>
+      <div class="stat-footer">
+        <span class="trend up">↑ 12%</span>
+        <span class="trend-label">from last month</span>
+      </div>
+    </div>
+
+    <div class="stat-glass-card">
+      <div class="stat-header">
+        <div class="stat-icon-wrapper green">✅</div>
+        <span class="stat-label">Published</span>
+      </div>
+      <div class="stat-value">{{ publishedBlogs }}</div>
+      <div class="stat-footer">
+        <span class="trend neutral">0%</span>
+        <span class="trend-label">stable</span>
+      </div>
+    </div>
+
+    <div class="stat-glass-card">
+      <div class="stat-header">
+        <div class="stat-icon-wrapper yellow">⏳</div>
+        <span class="stat-label">Scheduled</span>
+      </div>
+      <div class="stat-value">{{ scheduledBlogs }}</div>
+      <div class="stat-footer">
+        <span class="trend-label">Queue is active</span>
+      </div>
+    </div>
+
+    <div class="stat-glass-card">
+      <div class="stat-header">
+        <div class="stat-icon-wrapper red">📝</div>
+        <span class="stat-label">Drafts</span>
+      </div>
+      <div class="stat-value">{{ draftBlogs }}</div>
+      <div class="stat-footer">
+        <span class="trend down">↓ 2</span>
+        <span class="trend-label">needs attention</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Sections -->
+  <div class="dashboard-grid">
+    <!-- Recent Content Table -->
+    <section class="grid-card recent-activity">
+      <div class="card-header">
+        <h2>Recent Activity</h2>
+        <a routerLink="/admin/blogs" class="btn-text">View All activity</a>
+      </div>
+      <div class="activity-table-container">
+        <table class="activity-table">
+          <thead>
+            <tr>
+              <th>Content Title</th>
+              <th>Status</th>
+              <th class="text-right">Manage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let blog of recentBlogs">
+              <td>
+                <div class="blog-cell">
+                  <img [src]="blog.featuredImage || 'assets/images/placeholder.png'" class="blog-mini-thumb">
+                  <span class="blog-title">{{ blog.title }}</span>
+                </div>
+              </td>
+              <td>
+                <span [class]="'badge-status ' + (isScheduledPublished(blog) ? 'published' : blog.status)">
+                  {{ isScheduledPublished(blog) ? 'Published' : (blog.status | titlecase) }}
+                </span>
+              </td>
+              <td class="text-right">
+                <a [routerLink]="['/admin/blogs/edit', blog.id]" class="btn-icon-action">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Quick Shortcuts -->
+    <aside class="grid-card shortcuts">
+      <div class="card-header">
+        <h2>Quick Actions</h2>
+      </div>
+      <div class="shortcut-list">
+        <a routerLink="/admin/blogs/new" class="shortcut-item">
+          <div class="shortcut-icon-box plus">＋</div>
+          <div class="shortcut-text">
+            <span class="shortcut-title">Write Post</span>
+            <span class="shortcut-desc">Start a new blog article</span>
+          </div>
+        </a>
+        <a routerLink="/admin/categories" class="shortcut-item">
+          <div class="shortcut-icon-box folder">📁</div>
+          <div class="shortcut-text">
+            <span class="shortcut-title">Organize</span>
+            <span class="shortcut-desc">Manage blog categories</span>
+          </div>
+        </a>
+        <a routerLink="/admin/metadata" class="shortcut-item">
+          <div class="shortcut-icon-box settings">⚙️</div>
+          <div class="shortcut-text">
+            <span class="shortcut-title">SEO Config</span>
+            <span class="shortcut-desc">Manage page metadata</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="system-health">
+        <div class="health-header">
+          <span>System Health</span>
+          <span class="pulse"></span>
+        </div>
+        <div class="health-bar-container">
+          <div class="health-bar" style="width: 98%"></div>
+        </div>
+        <span class="health-status">All systems operational</span>
+      </div>
+    </aside>
+  </div>
+</div>
