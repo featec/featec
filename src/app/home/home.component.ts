@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy} from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { MetadataService } from '../services/metadata.service';
 
 @Component({
@@ -14,11 +15,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   private typingTimeout: any;
   private dynamicPhrases = ['B2B Operations', 'Distribution', 'Service Marketplace'];
 
-  constructor(private metadataService: MetadataService) {}
+  constructor(
+    private metadataService: MetadataService,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) {}
 
   ngOnInit() {
     this.metadataService.loadMetadata('home');
-    this.startTyping();
+    if (isPlatformBrowser(this.platformId)) {
+      this.startTyping();
+    }
   }
 
   ngOnDestroy() {
