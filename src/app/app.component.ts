@@ -19,26 +19,17 @@ export class AppComponent implements OnInit {
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: any // Inject PLATFORM_ID to detect if it's browser
   ) {
-    this.wowService.init();
+    if (isPlatformBrowser(this.platformId)) {
+      this.wowService.init();
+    }
+    
     this.router.events.subscribe((event: Event) => {
-      if (event instanceof NavigationStart) {
-        this.router.events.subscribe((event) => {
-          // Load script only on the client-side
-          if (isPlatformBrowser(this.platformId)) {
-            $.getScript('assets/js/main.js');
-          }
-        });
-      }
-
       if (event instanceof NavigationEnd) {
-        // Ensure gtag is only called in the browser
+        // Run browser-only scripts
         if (isPlatformBrowser(this.platformId)) {
+          $.getScript('assets/js/main.js');
           gtag('config', 'G-W244LKWRYC', { 'page_path': event.urlAfterRedirects });
         }
-      }
-
-      if (event instanceof NavigationError) {
-        // Handle navigation errors here if needed
       }
     });
   }

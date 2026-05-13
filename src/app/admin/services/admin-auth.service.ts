@@ -1,5 +1,6 @@
 // src/app/admin/services/admin-auth.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 
@@ -10,7 +11,8 @@ export class AdminAuthService {
 
   constructor(
     private firestore: AngularFirestore,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: any
   ) {}
 
   async login(username: string, password: string): Promise<boolean> {
@@ -24,9 +26,11 @@ export class AdminAuthService {
       const data = doc.data() as { username: string; password: string; displayName: string };
       
       if (data.password === password) {
-        localStorage.setItem('admin_username', username);
-        localStorage.setItem('admin_password', password);
-        localStorage.setItem('admin_display_name', data.displayName || username);
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.setItem('admin_username', username);
+          localStorage.setItem('admin_password', password);
+          localStorage.setItem('admin_display_name', data.displayName || username);
+        }
         return true;
       }
     }
@@ -34,17 +38,25 @@ export class AdminAuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('admin_username');
-    localStorage.removeItem('admin_password');
-    localStorage.removeItem('admin_display_name');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('admin_username');
+      localStorage.removeItem('admin_password');
+      localStorage.removeItem('admin_display_name');
+    }
     this.router.navigate(['/admin/login']);
   }
 
   getUserDisplayName(): string {
-    return localStorage.getItem('admin_display_name') || 'Admin';
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('admin_display_name') || 'Admin';
+    }
+    return 'Admin';
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('admin_username') && !!localStorage.getItem('admin_password');
+    if (isPlatformBrowser(this.platformId)) {
+      return !!localStorage.getItem('admin_username') && !!localStorage.getItem('admin_password');
+    }
+    return false;
   }
 }
